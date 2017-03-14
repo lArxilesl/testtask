@@ -13,6 +13,9 @@
 <body>
 
 <div class="container">
+    <form class="pull-right" action="/autoFill" method="get">
+        <button type="submit" class="btn btn-success">Auto Fill</button>
+    </form>
     <form class="form-inline" action="/search" method="post">
         <div class="form-group">
             <label for="naeStudent">Name</label>
@@ -104,10 +107,10 @@
                 <td>${m.date}</td>
                 <td>
                     <a href="/delete2/${m.idStudent}">
-                        <button formmethod="get" class="btn btn-warning">Delete</button>
+                        <button formmethod="get" class="btn btn-danger">Delete</button>
                     </a>
                     <a href="/update/${m.idStudent}">
-                        <button formmethod="get" class="btn btn-danger">Update</button>
+                        <button formmethod="get" class="btn btn-warning">Update</button>
                     </a>
                 </td>
             </tr>

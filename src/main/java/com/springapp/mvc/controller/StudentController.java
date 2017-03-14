@@ -1,15 +1,12 @@
 package com.springapp.mvc.controller;
 
 import com.springapp.mvc.dto.StudentDto;
-import com.springapp.mvc.model.Student;
+import com.springapp.mvc.repository.AutoFillRepository;
 import com.springapp.mvc.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -23,6 +20,10 @@ public class StudentController {
 
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private AutoFillRepository autoFillRepository;
+
+
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView printWelcome() {
@@ -94,6 +95,37 @@ public class StudentController {
     @RequestMapping(value = "/back", method = RequestMethod.GET)
     public String backToMain(String name) {
         return "redirect:/";
+    }
+
+    @RequestMapping(value = "/autoFill", method = RequestMethod.GET)
+    public String autoFill(String name) {
+        autoFillRepository.addStudents1();
+        return "redirect:/";
+    }
+
+
+    @RequestMapping(value="/list")
+    public ModelAndView listOfUsers(@RequestParam(required = false) Integer page) {
+        ModelAndView modelAndView = new ModelAndView("studentPage");
+
+        List<StudentDto> users = studentRepository.getAllStudents();
+        PagedListHolder<StudentDto> pagedListHolder = new PagedListHolder<StudentDto>(users);
+        pagedListHolder.setPageSize(5);
+        modelAndView.addObject("maxPages", pagedListHolder.getPageCount());
+
+        if(page==null || page < 1 || page > pagedListHolder.getPageCount())page=1;
+
+        modelAndView.addObject("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            modelAndView.addObject("users", pagedListHolder.getPageList());
+        }
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            modelAndView.addObject("users", pagedListHolder.getPageList());
+        }
+
+        return modelAndView;
     }
 
 
